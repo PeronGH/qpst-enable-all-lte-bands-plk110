@@ -47,4 +47,4 @@ Many people believe it requires unlocking the device bootloader and rooting the 
 
 The phone will now be able to connect to all LTE bands your carrier uses. With this mod, my Chinese Oneplus 15 happily connects to French LTE B28.
 
-[Purchase a Chinese Oneplus 15 (affilied link)]([TradingShenzhen](https://tradingshenzhen.com/en/oneplus-15?affp=257557))
+[Purchase a Chinese Oneplus 15 (affilied link)](https://tradingshenzhen.com/en/oneplus-15?affp=257557)
