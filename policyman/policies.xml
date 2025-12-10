@@ -11,7 +11,6 @@ $Header: //components/rel/mmcp.mpss/11.6/policyman/configurations/Master/Default
   <policy file="/policyman/device_config.xml" execute_for="device" load_for="device" refresh_on_sim_change="false" />  
   <policy file="/policyman/pre.xml" execute_for="subs" load_for="subs" refresh_on_sim_change="true" />
   <policy file="/policyman/carrier_policy.xml" execute_for="subs" load_for="subs" refresh_on_sim_change="true" />
-  <policy file="/policyman/generic_band_restrictions.xml" execute_for="subs" load_for="device" refresh_on_sim_change="false" />  
   <policy file="/policyman/post.xml" execute_for="subs" load_for="device" refresh_on_sim_change="false" />
   <policy file="/policyman/global_1x_restrictions.xml" execute_for="subs" load_for="device" refresh_on_sim_change="false" />  
   <policy file="/policyman/nrdc_msim_concurrency.xml" execute_for="subs" load_for="device" refresh_on_sim_change="false" />

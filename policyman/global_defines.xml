@@ -82,21 +82,21 @@ $Header: //components/rel/mmcp.mpss/11.2/policyman/configurations/Carrier/Generi
     <mcc_list name="global:taiwan_sim_group_dsda" ns="global"> 466 </mcc_list>
 
     <rf_band_list ns="global" name="global:default_bands">
-      <gw_bands  base="current" />
-      <lte_bands base="current" />
+      <gw_bands  base="hardware" />
+      <lte_bands base="hardware" />
 
-      <nr5g_sa_bands base="current" />
-      <nr5g_nsa_bands base="current" />
-      <nr5g_nrdc_bands base="current" />
+      <nr5g_sa_bands base="hardware" />
+      <nr5g_nsa_bands base="hardware" />
+      <nr5g_nrdc_bands base="hardware" />
     </rf_band_list>
 
     <rf_band_list ns="global" name="snpn_bands">
-      <gw_bands base="none" />
-      <lte_bands base="none" />
+      <gw_bands base="hardware" />
+      <lte_bands base="hardware" />
 
       <nr5g_sa_bands base="hardware" />
-      <nr5g_nsa_bands base="none" />
-      <nr5g_nrdc_bands base="none" />
+      <nr5g_nsa_bands base="hardware" />
+      <nr5g_nrdc_bands base="hardware" />
     </rf_band_list>
 
   </initial>
