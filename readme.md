@@ -1,52 +1,74 @@
-# How to enable all LTE bands on the Oneplus 15 chinese variant
+# Enable all LTE/5G bands on Chinese OnePlus 15 (PLK110)
 
-## Pros and cons of purchasing a Chinese unit
+Chinese OnePlus variants ship with modem policy files that restrict which network bands are active. This repo contains the original and modified policyman files to unlock all hardware-supported bands.
 
-### Pros
+## What it does
 
-- **Lower Price** – Imported models are often **much** cheaper than European versions.
-- **More Storage/RAM Options** – China variants sometimes offer higher-end configurations (the 1To variant is China-exclusive)
-- **Early Availability** – Chinese releases often come out before European models.
+- Sets all RF band lists (`gw`, `lte`, `nr5g_sa`, `nr5g_nsa`, `nr5g_nrdc`) to `base="hardware"` instead of `base="current"`/`base="none"`
+- Removes `generic_band_restrictions.xml` from the policy chain, which applies location-based band exclusions (e.g. disabling LTE B39/B41 in the US, restricting bands in Indonesia/Singapore/Japan/Taiwan)
 
----
+## Requirements
 
-### Cons
+- [.NET 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) or later
+- [ADB](https://developer.android.com/tools/adb) with root access (`su`)
+- [EfsTools](https://github.com/PeronGH/EfsTools) (cross-platform, no Windows/QPST needed)
 
-- **No Google Services by Default** - Chinese devices run on ColorOS which is specific to the Chinese market, but they can be imported with OxygenOS pre-installed from [TradingShenzhen (affilied link)](https://tradingshenzhen.com/en/oneplus-15?affp=257557)
-- **Missing 4G/5G Network Bands** – But can be solved with EFS edits (more on that later)
-- **Warranty Issues** – Repairs may require sending the phone back to China.
-- **No eSIM support** – Chinese Oneplus phones can only carry nano SIMs.
+## Steps
 
-## Convert a Chinese unit to OxygenOS
+### 1. Enable DIAG mode
 
-If you imported an unit with ColorOS installed, follow this great guide from @koaaN at XDA -> https://xdaforums.com/t/plk110-10-dec-coloros-to-oxygenos-eu-in-16-0-2-401-glo-16-0-1-303.4767949/
+If rooted (no reboot required):
 
-## Enable all missing 4G/5G network bands
+```sh
+adb shell 'su 0 setprop sys.usb.config diag,diag_mdm,qdss,qdss_mdm,serial_cdev,dpl,rmnet,adb'
+```
 
-Most people who import a device from China stop after installing the global ROM, but the device often performs below its full potential. Network connectivity is usually weaker, and battery life tends to suffer as a result.
+If not rooted, reboot to FTM mode first:
 
-This can be easily solved on Oneplus devices with Qualcomm Snapdragon SOCs, by modifying the modem policy configuration with the Qualcomm QPST tool.
+```sh
+adb reboot ftm
+adb shell setprop sys.usb.config diag,diag_mdm,qdss,qdss_mdm,serial_cdev,dpl,rmnet,adb
+```
 
-Many people believe it requires unlocking the device bootloader and rooting the device, but it does **NOT**. Here is how to achieve it, on the Oneplus 15 as an example:
+### 2. Backup your current files
 
-- Boot your **Windows PC**
-- Enable developer options in the settings.
-- In developer options, enable USB debugging.
-- Install [QPST](https://qpsttool.com/qpst-tool-v2-7-496)
-- Install [ADB](https://www.xda-developers.com/install-adb-windows-macos-linux/)
-- In a terminal/cmd prompt, type: `adb reboot ftm`. The device will reboot and show one line in Chinese on the screen.
-- Now that the device is up, type `adb shell` and in the device shell, `setprop sys.usb.config diag,diag_mdm,qdss,qdss_mdm,serial_cdev,dpl,rmnet,adb`. This will set the phone in Qualcomm DIAG mode.
-    - *Note that if your device is rooted, you can type `adb shell`, `su`, and then the setprop command without rebooting to FTM mode.*
-- Follow [this great guide](https://xdaforums.com/t/updated-6-30-25-how-to-enable-n77-5g-oxygen-os-11-14-0-0-1901-5g-uw-icon-oxygen-os-13-14-only-9-series-le2115-le2125-verizon-network.4429489/) from @rmendez011 at XDA on how to setup Qualcomm drivers. You will need to set up the drivers on the three unknown devices named after your device (in that case, `Oneplus 15`)
-- Open QPST configurator, EFS explorer, and extract `policyman/policies.xml`, as well as `policyman/global_defines.xml`
-- Apply [these changes](https://github.com/dekefake/qpst-enable-all-lte-bands-plk110/commit/8aa309194acc5a35722a3677704272ce055cc8cf) to your two files.
-- Drag and drop the edited files to the EFS Explorer window.
-- Once the files are replaced on the phone, close EFS Explorer.
-- In a terminal/cmd prompt, type: `adb reboot`.
-- Enjoy.
+```sh
+EfsTools readFile -i /policyman/global_defines.xml -o ./backup_global_defines.xml
+EfsTools readFile -i /policyman/policies.xml -o ./backup_policies.xml
+```
 
-The phone will now be able to connect to all LTE bands your carrier uses. With this mod, my Chinese Oneplus 15 happily connects to French LTE B28.
+### 3. Write the modded files
 
-[Purchase a Chinese Oneplus 15 (affilied link)](https://tradingshenzhen.com/en/oneplus-15?affp=257557)
+```sh
+EfsTools writeFile -i policyman/modded/global_defines.xml -o /policyman/global_defines.xml
+EfsTools writeFile -i policyman/modded/policies.xml -o /policyman/policies.xml
+```
 
-[XDA Guide](https://xdaforums.com/t/plk110-no-root-enable-all-lte-bands-on-the-chinese-oneplus-15.4771463/#post-90404658)
+### 4. Reboot
+
+```sh
+adb reboot
+```
+
+## Reverting
+
+Write back your backup files:
+
+```sh
+EfsTools writeFile -i ./backup_global_defines.xml -o /policyman/global_defines.xml
+EfsTools writeFile -i ./backup_policies.xml -o /policyman/policies.xml
+adb reboot
+```
+
+## Repo structure
+
+```
+policyman/
+  backup/   - original files from a stock Chinese PLK110
+  modded/   - modified files with all bands unlocked
+```
+
+## Credits
+
+- Band unlock method originally documented by [@dekefake](https://github.com/dekefake/qpst-enable-all-lte-bands-plk110) and [@rmendez011](https://xdaforums.com/t/updated-6-30-25-how-to-enable-n77-5g-oxygen-os-11-14-0-0-1901-5g-uw-icon-oxygen-os-13-14-only-9-series-le2115-le2125-verizon-network.4429489/)
+- [EfsTools](https://github.com/PeronGH/EfsTools) — cross-platform Qualcomm EFS tool over USB (libusb)
